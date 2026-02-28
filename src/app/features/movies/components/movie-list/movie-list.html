@@ -1,0 +1,10 @@
+<div class="list-container">
+<div class="grid">
+@for (movie of movies(); track movie.id) {
+<div class="grid-item">
+<app-movie-card [movieItem]="movie" />
+<button class="delete" (click)="onDeleteMovie(movie)">✖</button>
+</div>
+}
+</div>
+</div>

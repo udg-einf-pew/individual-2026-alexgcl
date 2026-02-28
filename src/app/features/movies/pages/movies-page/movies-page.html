@@ -1,0 +1,5 @@
+<div class="controls">
+<app-movie-form [isLoading]="isLoading()" (addMovieRequested)="addMovie($event)" />
+<app-movie-trash (removeMovieRequested)="deleteMovie($event)" />
+</div>
+<app-movie-list [movies]="movies()" (removeMovieRequested)="deleteMovie($event)"/>
