@@ -1,0 +1,21 @@
+.btn-trash {
+  background-color: #dc3545;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #c82333;
+  }
+
+  img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+  }
+}

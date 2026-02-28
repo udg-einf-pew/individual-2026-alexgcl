@@ -1,1 +1,13 @@
-<p>movie-trash works!</p>
+<button
+  type="button"
+  class="btn-trash"
+  title="Esborrar tot"
+  (click)="removeAllRequested.emit()"
+  (dragover)="onDragOver($event)"
+  (drop)="onDrop($event)"
+>
+  <img
+    src="https://cdn-icons-png.flaticon.com/512/1345/1345874.png"
+    alt="Esborrar tot"
+  />
+</button>

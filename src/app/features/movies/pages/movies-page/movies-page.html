@@ -1,5 +1,17 @@
 <div class="controls">
-<app-movie-form [isLoading]="isLoading()" (addMovieRequested)="addMovie($event)" />
-<app-movie-trash (removeMovieRequested)="deleteMovie($event)" />
+  <app-movie-form
+    [isLoading]="isLoading()"
+    (addMovieRequested)="addMovie($event)"
+  />
+  <app-movie-trash
+    (removeAllRequested)="deleteAll()"
+    (removeMovieRequested)="deleteMovieById($event)"
+  />
 </div>
-<app-movie-list [movies]="movies()" (removeMovieRequested)="deleteMovie($event)"/>
+<div class="list-container">
+  <app-movie-list
+    [movies]="movies()"
+    [deletingIds]="deletingIds()"
+    (removeMovieRequested)="deleteMovie($event)"
+  />
+</div>

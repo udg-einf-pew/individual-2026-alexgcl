@@ -1,0 +1,35 @@
+.movie-card {
+  position: relative;
+  width: 200px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 10px;
+  font-size: 12px;
+  overflow-y: auto;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  .movie-card:hover & {
+    opacity: 1;
+  }
+
+  a {
+    color: #00c3ff;
+  }
+}

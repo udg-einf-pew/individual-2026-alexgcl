@@ -1,0 +1,48 @@
+.grid {
+  gap: 10px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  width: 95%;
+  padding-top: 30px;
+  justify-content: space-around;
+  color: #bbb;
+}
+
+.grid-item {
+  position: relative;
+  transition: opacity 0.3s, transform 0.3s;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.fade-out {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #c82333;
+  }
+}

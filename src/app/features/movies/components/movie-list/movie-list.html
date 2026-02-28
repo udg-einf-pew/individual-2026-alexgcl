@@ -1,10 +1,20 @@
-<div class="list-container">
 <div class="grid">
-@for (movie of movies(); track movie.id) {
-<div class="grid-item">
-<app-movie-card [movieItem]="movie" />
-<button class="delete" (click)="onDeleteMovie(movie)">✖</button>
-</div>
-}
-</div>
+  @for (movie of movies(); track movie.id) {
+    <div
+      class="grid-item movie-card-wrapper"
+      [class.fade-out]="deletingIds().has(movie.id)"
+      draggable="true"
+      (dragstart)="onDragStart($event, movie)"
+    >
+      <app-movie-card [movieItem]="movie" />
+      <button
+        type="button"
+        class="delete"
+        (click)="onDeleteMovie(movie)"
+        aria-label="Esborrar"
+      >
+        ✖
+      </button>
+    </div>
+  }
 </div>

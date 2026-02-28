@@ -1,1 +1,14 @@
-<p>movie-form works!</p>
+<input
+  type="text"
+  #itemInput
+  placeholder="Escriu un element..."
+  [disabled]="isLoading()"
+  (keyup.enter)="onAdd(itemInput)"
+/>
+<button
+  type="button"
+  [disabled]="isLoading()"
+  (click)="onAdd(itemInput)"
+>
+  Afegir
+</button>

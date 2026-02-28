@@ -1,0 +1,28 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  margin: 20px 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  height: 90vh;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  position: sticky;
+  top: 0;
+  background: white;
+  padding-bottom: 10px;
+  align-items: center;
+  z-index: 10;
+}
+
+.list-container {
+  flex-grow: 1;
+  overflow: auto;
+}
