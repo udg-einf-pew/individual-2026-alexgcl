@@ -1,0 +1,19 @@
+{
+    // Visit https://aka.ms/tsconfig to read more about this file
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "nodenext",
+        "lib": ["esnext"],
+        "allowJs": true,
+        "sourceMap": true,
+        "outDir": "./build",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": false,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "noErrorTruncation": true
+    },
+    "exclude": ["node_modules", "build"],
+    "include": ["src/**/*"]
+}

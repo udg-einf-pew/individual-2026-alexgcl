@@ -1,0 +1,21 @@
+type Movie {
+    id: String!
+    title: String
+    poster: String
+    plot: String
+    runtime: String
+    director: String
+    year: String
+    actors: String
+    imdbRating: String
+    imdbId: String
+    error: String
+}
+type Query {
+    test: String
+    movies: [Movie!]!
+}
+type Mutation {
+    addMovie(title: String!): Movie!
+    deleteMovie(id: String!): Boolean!
+}
