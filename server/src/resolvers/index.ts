@@ -1,6 +1,9 @@
 import { TestResolver } from './test.resolver'
+import { MoviesResolver } from './movies.resolver'
+
 export const resolvers = [
-new TestResolver().getResolvers()
+  new TestResolver().getResolvers(),
+  new MoviesResolver().getResolvers()
 ].reduce(
     (acc, resolver) => {
         return {
