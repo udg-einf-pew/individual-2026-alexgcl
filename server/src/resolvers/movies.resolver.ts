@@ -13,7 +13,11 @@ export class MoviesResolver {
             },
             Mutation: {
                 addMovie: async (_parent: unknown, args: { title: string }): Promise<Movie> =>
-                await this.moviesService.addMovie(args.title)
+                    await this.moviesService.addMovie(args.title),
+                deleteMovie: (_parent: unknown, args: { id: string }): boolean =>
+                    this.moviesService.deleteMovie(args.id),
+                deleteAllMovies: (): boolean =>
+                    this.moviesService.deleteAllMovies()
             }
         }
     }

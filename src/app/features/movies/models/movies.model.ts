@@ -11,4 +11,8 @@ export interface MovieData {
   poster: string;
 }
 
-export type MovieItem = MovieData;
+export interface MovieItem {
+  data: MovieData;
+  searchTitle: string;
+  isDeleting: boolean;
+}

@@ -51,6 +51,12 @@ export class MoviesService {
         this.movies = this.movies.filter((it) => it.id !== movieId);
         return this.movies.length < initialLength;
     }
+
+    deleteAllMovies(): boolean {
+        const hadMovies = this.movies.length > 0;
+        this.movies = [];
+        return hadMovies;
+    }
     private ErrorMovie(title: string, data: Partial<Movie>): Movie {
         return {
             id: crypto.randomUUID(),

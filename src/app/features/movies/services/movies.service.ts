@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { MovieData, MovieItem } from '../models/movies.model';
-import { GET_MOVIES, ADD_MOVIE } from '../graphql/movies.graphql';
+import { GET_MOVIES, ADD_MOVIE, DELETE_MOVIE, DELETE_ALL_MOVIES } from '../graphql/movies.graphql';
 
 @Injectable({
   providedIn: 'root',
@@ -16,10 +16,17 @@ export class MoviesService {
   isLoading = this._isLoading.asReadonly();
   // Computed signal for total movies count
   moviesCount = computed(() => this._movies().length);
-  private _moviesListWatchQuery = this.apollo.watchQuery<{ movies: MovieData[] }>({ query:
-  GET_MOVIES });
+  deletingIds = computed(() => new Set(this._movies().filter((m: MovieItem) => m.isDeleting).map((m: MovieItem) => m.data.id)));
+  private _moviesListWatchQuery = this.apollo.watchQuery<{ movies: MovieData[] }>({ query: GET_MOVIES });
   private _moviesAddMutation = (title: string) => this.apollo.mutate<{ addMovie: MovieData }>({
-  mutation: ADD_MOVIE, variables: { title }, refetchQueries: [{ query: GET_MOVIES }] });
+    mutation: ADD_MOVIE, variables: { title }, refetchQueries: [{ query: GET_MOVIES }]
+  });
+  private _moviesDeleteMutation = (id: string) => this.apollo.mutate<{ deleteMovie: boolean }>({
+    mutation: DELETE_MOVIE, variables: { id }, refetchQueries: [{ query: GET_MOVIES }]
+  });
+  private _moviesDeleteAllMutation = () => this.apollo.mutate<{ deleteAllMovies: boolean }>({
+    mutation: DELETE_ALL_MOVIES, refetchQueries: [{ query: GET_MOVIES }]
+  });
   constructor() {
     this.loadMovies();
   }
@@ -66,13 +73,33 @@ export class MoviesService {
     });
   }
   deleteMovie(movie: MovieItem): void {
+    const id = movie.data.id;
     this._movies.update((current) =>
-    current.map((it) =>
-    it.data.id === movie.data.id ? { ...it, isDeleting: true } : it
-    )
+      current.map((it) =>
+        it.data.id === id ? { ...it, isDeleting: true } : it
+      )
     );
     setTimeout(() => {
-    //TODO
+      this._moviesDeleteMutation(id).subscribe({
+        next: () => {
+          this._movies.update((current) => current.filter((it) => it.data.id !== id));
+        },
+        error: (err) => {
+          console.error('Error deleting movie:', err);
+          this._movies.update((current) =>
+            current.map((it) => (it.data.id === id ? { ...it, isDeleting: false } : it))
+          );
+        },
+      });
     }, 300);
+  }
+
+  deleteAll(): void {
+    this._moviesDeleteAllMutation().subscribe({
+      next: () => {
+        this._movies.set([]);
+      },
+      error: (err) => console.error('Error deleting all movies:', err),
+    });
   }
 }

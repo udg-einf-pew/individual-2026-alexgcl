@@ -1,14 +1,14 @@
 <div class="movie-card">
-  <img [src]="movieItem().poster" [alt]="movieItem().title" />
+  <img [src]="movieItem().data.poster" [alt]="movieItem().data.title" />
   <div class="overlay">
-    <h3>{{ movieItem().title }} ({{ movieItem().year }})</h3>
-    <p><strong>Durada:</strong> {{ movieItem().runtime }}</p>
-    <p><strong>Director:</strong> {{ movieItem().director }}</p>
-    <p><strong>Actors:</strong> {{ movieItem().actors }}</p>
-    <p><strong>IMDb:</strong> {{ movieItem().imdbRating }}/10</p>
-    <p>{{ movieItem().plot }}</p>
+    <h3>{{ movieItem().data.title }} ({{ movieItem().data.year }})</h3>
+    <p><strong>Durada:</strong> {{ movieItem().data.runtime }}</p>
+    <p><strong>Director:</strong> {{ movieItem().data.director }}</p>
+    <p><strong>Actors:</strong> {{ movieItem().data.actors }}</p>
+    <p><strong>IMDb:</strong> {{ movieItem().data.imdbRating }}/10</p>
+    <p>{{ movieItem().data.plot }}</p>
     <a
-      [href]="'https://www.imdb.com/title/' + movieItem().imdbID"
+      [href]="'https://www.imdb.com/title/' + movieItem().data.imdbId"
       target="_blank"
       rel="noopener noreferrer"
     >

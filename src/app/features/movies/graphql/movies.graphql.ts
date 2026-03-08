@@ -34,3 +34,15 @@ export const ADD_MOVIE = gql`
         }
     }
 `;
+
+export const DELETE_MOVIE = gql`
+    mutation DeleteMovie($id: String!) {
+        deleteMovie(id: $id)
+    }
+`;
+
+export const DELETE_ALL_MOVIES = gql`
+    mutation DeleteAllMovies {
+        deleteAllMovies
+    }
+`;

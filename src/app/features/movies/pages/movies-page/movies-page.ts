@@ -35,11 +35,12 @@ export class MoviesPage {
   }
 
   deleteMovie(movie: MovieItem): void {
-    this.moviesService.deleteMovie(movie.id);
+    this.moviesService.deleteMovie(movie);
   }
 
   deleteMovieById(id: string): void {
-    this.moviesService.deleteMovie(id);
+    const movie = this.movies().find((m) => m.data.id === id);
+    if (movie) this.moviesService.deleteMovie(movie);
   }
 
   deleteAll(): void {

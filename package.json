@@ -12,6 +12,9 @@
   "private": true,
   "packageManager": "npm@11.6.2",
   "dependencies": {
+    "@apollo/client": "^3.11.0",
+    "apollo-angular": "^6.2.0",
+    "graphql": "^16.8.0",
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
     "@angular/core": "^21.2.0",

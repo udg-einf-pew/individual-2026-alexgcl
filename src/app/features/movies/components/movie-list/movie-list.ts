@@ -1,11 +1,6 @@
-import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { MovieItem } from '../../models/movies.model';
+import { CommonModule } from '@angular/common';
 import { MovieCard } from '../movie-card/movie-card';
 
 @Component({
@@ -25,7 +20,10 @@ export class MovieList {
     this.removeMovieRequested.emit(movie);
   }
 
-  onDragStart(ev: DragEvent, movie: MovieItem): void {
-    ev.dataTransfer?.setData('text/plain', movie.id);
+  onDragStart(ev: DragEvent, id: string): void {
+    if (ev.dataTransfer) {
+      ev.dataTransfer.effectAllowed = 'move';
+      ev.dataTransfer.setData('text/plain', id);
+    }
   }
 }
