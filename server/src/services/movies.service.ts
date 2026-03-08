@@ -29,7 +29,7 @@ export class MoviesService {
     }
 
     getMovies(): Movie[] {
-        return this.movies;
+        return this.movies.map((m) => this.ensureMovieId(m));
     }
 
     async addMovie(title: string): Promise<Movie> {
@@ -53,12 +53,16 @@ export class MoviesService {
         this.movies = [];
         return hadMovies;
     }
+    private ensureMovieId(m: Movie): Movie {
+        return { ...m, id: m.id || crypto.randomUUID() };
+    }
+
     private ErrorMovie(title: string, data: Partial<Movie>): Movie {
-        return {
+        return this.ensureMovieId({
             id: crypto.randomUUID(),
             title: title,
             ...data
-        } as Movie;
+        } as Movie);
     }
     private mapOmdbToMovie(omdbData: Record<string, unknown> | null | undefined): Movie {
         const o = omdbData ?? {};

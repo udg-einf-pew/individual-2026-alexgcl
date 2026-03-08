@@ -11,14 +11,8 @@ const typeDefs = readFileSync(join(__dirname, 'schema.graphql'), 'utf-8')
 const schema = createSchema({ typeDefs, resolvers })
 const yoga = createYoga({ schema })
 
-const server = createServer((req, res) => {
-  if (req.url === '/' || req.url === '') {
-    res.writeHead(302, { Location: '/graphql' })
-    res.end()
-    return
-  }
-  yoga(req, res)
-})
+// Pass it into a server to hook into request handlers.
+const server = createServer(yoga)
 
 // Start the server and you're done!
 server.listen(4000, () => {

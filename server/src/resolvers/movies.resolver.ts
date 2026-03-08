@@ -9,11 +9,24 @@ export class MoviesResolver {
     getResolvers() {
         return {
             Query: {
-                movies: (): Movie[] => this.moviesService.getMovies()
+                movies: (): Movie[] => {
+                    try {
+                        return this.moviesService.getMovies() ?? []
+                    } catch (err) {
+                        console.error('getMovies error:', err)
+                        return []
+                    }
+                }
             },
             Mutation: {
-                addMovie: async (_parent: unknown, args: { title: string }): Promise<Movie> =>
-                    await this.moviesService.addMovie(args?.title ?? ''),
+                addMovie: async (_parent: unknown, args: { title: string }): Promise<Movie> => {
+                    try {
+                        return await this.moviesService.addMovie(args?.title ?? '')
+                    } catch (err) {
+                        console.error('addMovie error:', err)
+                        throw err
+                    }
+                },
                 deleteMovie: (_parent: unknown, args: { id: string }): boolean =>
                     this.moviesService.deleteMovie(args.id),
                 deleteAllMovies: (): boolean =>
