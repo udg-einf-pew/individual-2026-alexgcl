@@ -1,4 +1,4 @@
-export interface MovieItem {
+export interface MovieData {
   id: string;
   title: string;
   year: string;
@@ -10,3 +10,5 @@ export interface MovieItem {
   imdbID: string;
   poster: string;
 }
+
+export type MovieItem = MovieData;

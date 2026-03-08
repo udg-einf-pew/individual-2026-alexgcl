@@ -1,29 +1,20 @@
-import { createServer } from 'http'
-import { createSchema, createYoga } from 'graphql-yoga'
+import clc from 'cli-color'
+import { createServer } from 'node:http'
+import { createYoga, createSchema } from 'graphql-yoga'
 import { readFileSync } from 'fs'
 import { join } from 'path'
-import { resolvers } from './resolvers/index'
+import { resolvers } from './resolvers'
 
-const typeDefs = readFileSync(
-  join(process.cwd(), 'src', 'schema.graphql'),
-  'utf-8'
-)
+const typeDefs = readFileSync(join(__dirname, 'schema.graphql'), 'utf-8')
 
-const schema = createSchema({
-  typeDefs,
-  resolvers
-})
+// Create a Yoga instance with a GraphQL schema.
+const schema = createSchema({ typeDefs, resolvers })
+const yoga = createYoga({ schema })
 
-const yoga = createYoga({
-  schema,
-  graphiql: true,
-  graphqlEndpoint: '/',
-  landingPage: false
-})
-
+// Pass it into a server to hook into request handlers.
 const server = createServer(yoga)
-const port = process.env.PORT ?? 4000
 
-server.listen(port, () => {
-  console.info(`Server is running on http://localhost:${port}/`)
+// Start the server and you're done!
+server.listen(4000, () => {
+ console.info(clc.blueBright('Server is running on http://localhost:4000/graphql'))
 })
