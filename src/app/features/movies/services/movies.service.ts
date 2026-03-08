@@ -37,7 +37,7 @@ export class MoviesService {
   this._moviesListWatchQuery.valueChanges.subscribe({
   next: (result: ApolloQueryResult<{ movies: MovieData[] }>) => {
   console.log('Movies loaded successfully:', result.data?.movies?.length);
-  const moviesData = result?.data?.movies;
+  const moviesData = result?.data?.movies as MovieData[] | undefined;
   if (!moviesData) {
     this._isLoading.set(false);
     return;
@@ -64,7 +64,7 @@ export class MoviesService {
     this._isLoading.set(true);
     this._moviesAddMutation(title)
     .subscribe({
-    next: (result: ApolloQueryResult<{ addMovie: MovieData }>) => {
+    next: (result: { data?: { addMovie: MovieData } }) => {
       console.log('Movie added successfully:', result.data?.addMovie);
     },
     error: (err: unknown) => {
