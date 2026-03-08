@@ -1,14 +1,16 @@
 export interface MovieData {
   id: string;
-  title: string;
-  year: string;
-  runtime: string;
-  director: string;
-  actors: string;
-  imdbRating: string;
-  plot: string;
-  imdbID: string;
-  poster: string;
+  title?: string;
+  year?: string;
+  runtime?: string;
+  director?: string;
+  actors?: string;
+  imdbRating?: string;
+  plot?: string;
+  imdbID?: string;
+  imdbId?: string;
+  poster?: string;
+  error?: string;
 }
 
 export interface MovieItem {

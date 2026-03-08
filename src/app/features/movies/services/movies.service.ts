@@ -1,5 +1,6 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { Apollo } from 'apollo-angular';
+import { ApolloQueryResult } from '@apollo/client';
 import { MovieData, MovieItem } from '../models/movies.model';
 import { GET_MOVIES, ADD_MOVIE, DELETE_MOVIE, DELETE_ALL_MOVIES } from '../graphql/movies.graphql';
 
@@ -34,7 +35,7 @@ export class MoviesService {
   console.log('Loading movies...');
   this._isLoading.set(true);
   this._moviesListWatchQuery.valueChanges.subscribe({
-  next: (result) => {
+  next: (result: ApolloQueryResult<{ movies: MovieData[] }>) => {
   console.log('Movies loaded successfully:', result.data?.movies?.length);
   const moviesData = result?.data?.movies;
   if (!moviesData) {
@@ -42,7 +43,7 @@ export class MoviesService {
     return;
   }
   this._movies.set(
-  moviesData.map((data): MovieItem => {
+  moviesData.map((data: MovieData): MovieItem => {
     return {
     data,
     searchTitle: data.title || '',
@@ -52,8 +53,8 @@ export class MoviesService {
   );
   this._isLoading.set(false);
   },
-  error: (error) => {
-  console.error('Error loading movies:', error);
+  error: (err: unknown) => {
+  console.error('Error loading movies:', err);
   this._isLoading.set(false);
   },
   });
@@ -63,11 +64,11 @@ export class MoviesService {
     this._isLoading.set(true);
     this._moviesAddMutation(title)
     .subscribe({
-    next: (result) => {
+    next: (result: ApolloQueryResult<{ addMovie: MovieData }>) => {
       console.log('Movie added successfully:', result.data?.addMovie);
     },
-    error: (error) => {
-      console.error('Error adding movie:', error);
+    error: (err: unknown) => {
+      console.error('Error adding movie:', err);
       this._isLoading.set(false);
     },
     });
@@ -84,7 +85,7 @@ export class MoviesService {
         next: () => {
           this._movies.update((current) => current.filter((it) => it.data.id !== id));
         },
-        error: (err) => {
+        error: (err: unknown) => {
           console.error('Error deleting movie:', err);
           this._movies.update((current) =>
             current.map((it) => (it.data.id === id ? { ...it, isDeleting: false } : it))
@@ -99,7 +100,7 @@ export class MoviesService {
       next: () => {
         this._movies.set([]);
       },
-      error: (err) => console.error('Error deleting all movies:', err),
+      error: (err: unknown) => console.error('Error deleting all movies:', err),
     });
   }
 }
