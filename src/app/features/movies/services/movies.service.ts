@@ -62,15 +62,25 @@ export class MoviesService {
   addMovie(title: string): void {
     if (title.trim() === '') return;
     this._isLoading.set(true);
-    this._moviesAddMutation(title)
-    .subscribe({
-    next: (result: { data?: { addMovie: MovieData } }) => {
-      console.log('Movie added successfully:', result.data?.addMovie);
-    },
-    error: (err: unknown) => {
-      console.error('Error adding movie:', err);
-      this._isLoading.set(false);
-    },
+    this._moviesAddMutation(title).subscribe({
+      next: (result: { data?: { addMovie: MovieData } }) => {
+        this._isLoading.set(false);
+        const newMovie = result.data?.addMovie;
+        if (newMovie) {
+          this._movies.update((current) => [
+            ...current,
+            {
+              data: newMovie,
+              searchTitle: newMovie.title || '',
+              isDeleting: false,
+            },
+          ]);
+        }
+      },
+      error: (err: unknown) => {
+        console.error('Error adding movie:', err);
+        this._isLoading.set(false);
+      },
     });
   }
   deleteMovie(movie: MovieItem): void {

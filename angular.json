@@ -68,8 +68,7 @@
               "buildTarget": "individual-2026-alexgcl:build:production"
             },
             "development": {
-              "buildTarget": "individual-2026-alexgcl:build:development",
-              "proxyConfig": "proxy.conf.json"
+              "buildTarget": "individual-2026-alexgcl:build:development"
             }
           },
           "defaultConfiguration": "development"
