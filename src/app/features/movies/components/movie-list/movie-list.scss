@@ -12,7 +12,9 @@
 
 .grid-item {
   position: relative;
-  transition: opacity 0.3s, transform 0.3s;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
   cursor: grab;
 
   &:active {
@@ -20,10 +22,10 @@
   }
 }
 
-.fade-out {
+.grid-item.fade-out {
   opacity: 0;
   transform: scale(0.8);
-  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
 }
 
 .delete {

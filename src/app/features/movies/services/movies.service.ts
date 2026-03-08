@@ -106,11 +106,20 @@ export class MoviesService {
   }
 
   deleteAll(): void {
-    this._moviesDeleteAllMutation().subscribe({
-      next: () => {
-        this._movies.set([]);
-      },
-      error: (err: unknown) => console.error('Error deleting all movies:', err),
-    });
+    const current = this._movies();
+    if (current.length === 0) return;
+    this._movies.update((list) => list.map((it) => ({ ...it, isDeleting: true })));
+    const durationMs = 400;
+    setTimeout(() => {
+      this._moviesDeleteAllMutation().subscribe({
+        next: () => {
+          this._movies.set([]);
+        },
+        error: (err: unknown) => {
+          console.error('Error deleting all movies:', err);
+          this._movies.update((list) => list.map((it) => ({ ...it, isDeleting: false })));
+        },
+      });
+    }, durationMs);
   }
 }
