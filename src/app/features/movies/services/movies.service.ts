@@ -91,8 +91,8 @@ export class MoviesService {
             current.filter((it) => it.data.id !== movie.data.id)
           );
         },
-        error: () => {
-          console.error('Error deleting movies:', error);
+        error: (err: unknown) => {
+          console.error('Error deleting movie:', err);
           this._movies.update((current: MovieItem[]) =>
             current.map((it: MovieItem) =>
               it.data.id === movie.data.id ? { ...it, isDeleting: false } : it
@@ -110,8 +110,8 @@ export class MoviesService {
         this._movies.set([]);
         this._isLoading.set(false);
       },
-      error: () => {
-        console.error('Error deleting movies:', error);
+      error: (err: unknown) => {
+        console.error('Error deleting all movies:', err);
         this._isLoading.set(false);
       },
     });
