@@ -88,7 +88,7 @@ export class MoviesService {
 
     private async fetchMovie(title: string): Promise<Movie> {
         const urlTitle = encodeURI(title);
-        const response = await fetch(`https://www.omdbapi.com/?apikey=bdfd7e6f&t=${urlTitle}`);
+        const response = await fetch(`https://www.omdbapi.com/?apikey=e1e6eb54&t=${urlTitle}`);
         const omdbData = await response.json();
         return this.mapOmdbToMovie(omdbData);
     }
