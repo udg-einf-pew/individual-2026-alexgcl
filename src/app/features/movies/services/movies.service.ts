@@ -39,9 +39,9 @@ export class MoviesService {
     console.log('Loading movies...');
     this._isLoading.set(true);
     this._moviesListWatchQuery.valueChanges.subscribe({
-      next: (result: { data?: { movies?: MovieData[] } }) => {
+      next: (result) => {
         console.log('Movies loaded successfully:', result.data?.movies?.length);
-        const moviesData = result?.data?.movies;
+        const moviesData = result?.data?.movies as MovieData[] | undefined;
         if (!moviesData) {
           this._isLoading.set(false);
           return;
