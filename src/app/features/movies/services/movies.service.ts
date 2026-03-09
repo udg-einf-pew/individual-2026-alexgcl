@@ -6,7 +6,6 @@ import { GET_MOVIES, ADD_MOVIE, DELETE_MOVIE, DELETE_ALL_MOVIES } from '../graph
 @Injectable({
   providedIn: 'root',
 })
-
 export class MoviesService {
   private apollo = inject(Apollo);
 
@@ -35,75 +34,69 @@ export class MoviesService {
   constructor() {
     this.loadMovies();
   }
-  
+
   private loadMovies(): void {
-  console.log('Loading movies...');
-  this._isLoading.set(true);
-  this._moviesListWatchQuery.valueChanges.subscribe({
-  next: (result: ApolloQueryResult<{ movies: MovieData[] }>) => {
-  console.log('Movies loaded successfully:', result.data?.movies?.length);
-  const moviesData = result?.data?.movies as MovieData[] | undefined;
-  if (!moviesData) {
-    this._isLoading.set(false);
-    return;
-  }
-  this._movies.set(
-  moviesData.map((data: MovieData): MovieItem => {
-    return {
-    data,
-    searchTitle: data.title || '',
-    isDeleting: false
-    };
-  })
-  );
-  this._isLoading.set(false);
-  },
-  error: (err: unknown) => {
-  console.error('Error loading movies:', err);
-  this._isLoading.set(false);
-  },
-  });
-  }
-  addMovie(title: string): void {
-    if (title.trim() === '') return;
+    console.log('Loading movies...');
     this._isLoading.set(true);
-    this._moviesAddMutation(title).subscribe({
-      next: (result: { data?: { addMovie: MovieData } }) => {
-        this._isLoading.set(false);
-        const newMovie = result.data?.addMovie;
-        if (newMovie) {
-          this._movies.update((current) => [
-            ...current,
-            {
-              data: newMovie,
-              searchTitle: newMovie.title || '',
-              isDeleting: false,
-            },
-          ]);
+    this._moviesListWatchQuery.valueChanges.subscribe({
+      next: (result: { data?: { movies?: MovieData[] } }) => {
+        console.log('Movies loaded successfully:', result.data?.movies?.length);
+        const moviesData = result?.data?.movies;
+        if (!moviesData) {
+          this._isLoading.set(false);
+          return;
         }
+        this._movies.set(
+          moviesData.map((data: MovieData): MovieItem => {
+            return {
+              data,
+              searchTitle: data.title || '',
+              isDeleting: false
+            };
+          })
+        );
+        this._isLoading.set(false);
       },
-      error: (err: unknown) => {
-        console.error('Error adding movie:', err);
+      error: (error: unknown) => {
+        console.error('Error loading movies:', error);
         this._isLoading.set(false);
       },
     });
   }
+
+  addMovie(title: string): void {
+    if (title.trim() === '') return;
+    this._isLoading.set(true);
+    this._moviesAddMutation(title).subscribe({
+      next: (result: { data?: { addMovie?: MovieData } }) => {
+        console.log('Movie added successfully:', result.data?.addMovie);
+      },
+      error: (error: unknown) => {
+        console.error('Error adding movie:', error);
+        this._isLoading.set(false);
+      },
+    });
+  }
+
   deleteMovie(movie: MovieItem): void {
-    const id = movie.data.id;
-    this._movies.update((current) =>
-      current.map((it) =>
-        it.data.id === id ? { ...it, isDeleting: true } : it
+    this._movies.update((current: MovieItem[]) =>
+      current.map((it: MovieItem) =>
+        it.data.id === movie.data.id ? { ...it, isDeleting: true } : it
       )
     );
     setTimeout(() => {
-      this._moviesDeleteMutation(id).subscribe({
+      this._moviesDeleteMutation(movie.data.id).subscribe({
         next: () => {
-          this._movies.update((current) => current.filter((it) => it.data.id !== id));
-        },
-        error: (err: unknown) => {
-          console.error('Error deleting movie:', err);
           this._movies.update((current) =>
-            current.map((it) => (it.data.id === id ? { ...it, isDeleting: false } : it))
+            current.filter((it) => it.data.id !== movie.data.id)
+          );
+        },
+        error: () => {
+          console.error('Error deleting movies:', error);
+          this._movies.update((current: MovieItem[]) =>
+            current.map((it: MovieItem) =>
+              it.data.id === movie.data.id ? { ...it, isDeleting: false } : it
+            )
           );
         },
       });
@@ -111,20 +104,16 @@ export class MoviesService {
   }
 
   deleteAll(): void {
-    const current = this._movies();
-    if (current.length === 0) return;
-    this._movies.update((list) => list.map((it) => ({ ...it, isDeleting: true })));
-    const durationMs = 400;
-    setTimeout(() => {
-      this._moviesDeleteAllMutation().subscribe({
-        next: () => {
-          this._movies.set([]);
-        },
-        error: (err: unknown) => {
-          console.error('Error deleting all movies:', err);
-          this._movies.update((list) => list.map((it) => ({ ...it, isDeleting: false })));
-        },
-      });
-    }, durationMs);
+    this._isLoading.set(true);
+    this._moviesDeleteAllMutation().subscribe({
+      next: () => {
+        this._movies.set([]);
+        this._isLoading.set(false);
+      },
+      error: () => {
+        console.error('Error deleting movies:', error);
+        this._isLoading.set(false);
+      },
+    });
   }
 }
