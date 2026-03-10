@@ -3,7 +3,7 @@ import MovieModel from '../models/movie';
 
 export class MoviesService {
     constructor() {
-        // Ya no cargamos películas iniciales; los datos vienen de MongoDB
+        // Ja no carreguem pelicules inicials; les dades venen de MongoDB
     }
 
     private mapDocToMovie(doc: unknown): Movie {
