@@ -1,17 +1,19 @@
 import { Movie } from '../types';
 import MovieModel from '../models/movie';
 
-type MovieDoc = { toObject?: () => Record<string, unknown>; _id?: unknown } & Record<string, unknown>;
-
 export class MoviesService {
     constructor() {
         // Ya no cargamos películas iniciales; los datos vienen de MongoDB
     }
 
-    private mapDocToMovie(doc: MovieDoc): Movie {
-        const obj = doc.toObject ? doc.toObject() : doc;
-        const id = (obj as { _id?: unknown })._id;
-        const { _id, ...rest } = obj as Record<string, unknown> & { _id: unknown };
+    private mapDocToMovie(doc: unknown): Movie {
+        const raw = doc as Record<string, unknown>;
+        const obj =
+            typeof raw?.toObject === 'function'
+                ? (raw.toObject() as Record<string, unknown>)
+                : raw;
+        const id = obj?._id;
+        const { _id, __v, ...rest } = obj ?? {};
         return {
             ...rest,
             id: id != null ? String(id) : '',
@@ -20,7 +22,7 @@ export class MoviesService {
 
     async getMovies(): Promise<Movie[]> {
         const docs = await MovieModel.find().exec();
-        return docs.map((doc: MovieDoc) => this.mapDocToMovie(doc));
+        return docs.map((doc: unknown) => this.mapDocToMovie(doc));
     }
 
     async addMovie(title: string): Promise<Movie> {
@@ -36,7 +38,7 @@ export class MoviesService {
         const movieData = this.mapOmdbToMovieData(omdbData);
         const newMovie = new MovieModel(movieData);
         const saved = await newMovie.save();
-        return this.mapDocToMovie(saved as MovieDoc);
+        return this.mapDocToMovie(saved);
     }
 
     async deleteMovie(movieId: string): Promise<boolean> {
