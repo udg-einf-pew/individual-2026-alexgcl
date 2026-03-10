@@ -15,6 +15,20 @@
       "request": "launch",
       "preLaunchTask": "npm: test",
       "url": "http://localhost:9876/debug.html"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug server",
+      "cwd": "${workspaceFolder}/server",
+      "runtimeArgs": ["-r", "ts-node/register"],
+      "args": ["src/server.ts"],
+      "sourceMaps": true,
+      "protocol": "inspector",
+      "skipFiles": ["<node_internals>/**"],
+      "env": {
+        "TS_NODE_PROJECT": "tsconfig.json"
+      }
     }
   ]
 }
