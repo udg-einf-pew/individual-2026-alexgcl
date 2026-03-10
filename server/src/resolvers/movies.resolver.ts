@@ -11,7 +11,7 @@ export class MoviesResolver {
     getResolvers() {
         return {
             Query: {
-                movies: (): Movie[] => this.moviesService.getMovies()
+                movies: async (): Promise<Movie[]> => await this.moviesService.getMovies()
             },
             Mutation: {
                 addMovie: async (_parent: unknown, args: {title: string}): Promise<Movie> =>

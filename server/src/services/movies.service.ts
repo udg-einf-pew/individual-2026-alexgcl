@@ -1,36 +1,26 @@
-import {Movie} from '../types';
+import { Movie } from '../types';
+import MovieModel from '../models/movie';
+
+type MovieDoc = { toObject?: () => Record<string, unknown>; _id?: unknown } & Record<string, unknown>;
 
 export class MoviesService {
-    private movies: Movie[] = [];
-
     constructor() {
-        this.loadInitialMovies();
-    }
-    
-    private async loadInitialMovies(): Promise<void> {
-        const initialMovies = [
-            'Blade Runner',
-            'The Silence of the Lambs',
-            'Spirited Away',
-            'Starship Troopers',
-            'The Shawshank Redemption',
-            'Thor',
-        ];
-
-        for (const title of initialMovies) {
-            try {
-                const newMovie = await this.fetchMovie(title);
-                this.movies.push(newMovie);
-            } 
-            catch (error) {
-                const errorMovie = this.ErrorMovie(title, { error: "Failed to fetch movie data" });
-                this.movies.push(errorMovie);
-            }
-        }
+        // Ya no cargamos películas iniciales; los datos vienen de MongoDB
     }
 
-    getMovies(): Movie[] {
-        return this.movies;
+    private mapDocToMovie(doc: MovieDoc): Movie {
+        const obj = doc.toObject ? doc.toObject() : doc;
+        const id = (obj as { _id?: unknown })._id;
+        const { _id, ...rest } = obj as Record<string, unknown> & { _id: unknown };
+        return {
+            ...rest,
+            id: id != null ? String(id) : '',
+        } as Movie;
+    }
+
+    async getMovies(): Promise<Movie[]> {
+        const docs = await MovieModel.find().exec();
+        return docs.map((doc: MovieDoc) => this.mapDocToMovie(doc));
     }
 
     async addMovie(title: string): Promise<Movie> {
@@ -38,58 +28,67 @@ export class MoviesService {
             throw new Error('Title cannot be empty');
         }
 
-        try {
-            const newMovie = await this.fetchMovie(title);
-            this.movies.push(newMovie);
-            return newMovie;
-        } 
-        catch (error) {
-            const errorMovie = this.ErrorMovie(title, {error: "Failed to fetch movie data"});
-            this.movies.push(errorMovie);
-            return errorMovie;
+        const omdbData = await this.fetchOmdbMovie(title);
+        if (omdbData.Error) {
+            throw new Error(omdbData.Error || 'Failed to fetch movie data');
         }
+
+        const movieData = this.mapOmdbToMovieData(omdbData);
+        const newMovie = new MovieModel(movieData);
+        const saved = await newMovie.save();
+        return this.mapDocToMovie(saved as MovieDoc);
     }
 
-    deleteMovie(movieId: string): boolean {
-        const initialLength = this.movies.length;
-        this.movies = this.movies.filter((it) => it.id !== movieId);
-        return this.movies.length < initialLength;
+    async deleteMovie(movieId: string): Promise<boolean> {
+        const result = await MovieModel.findByIdAndDelete(movieId).exec();
+        return result != null;
     }
 
-    deleteAllMovies(): boolean {
-        const hadMovies = this.movies.length > 0;
-        this.movies = [];
-        return hadMovies;
+    async deleteAllMovies(): Promise<boolean> {
+        const result = await MovieModel.deleteMany({}).exec();
+        return (result?.deletedCount ?? 0) > 0;
     }
 
-    private ErrorMovie(title: string, data: Partial<Movie>): Movie {
+    private mapOmdbToMovieData(omdbData: {
+        Title?: string;
+        Poster?: string;
+        Plot?: string;
+        Director?: string;
+        Runtime?: string;
+        Year?: string;
+        Actors?: string;
+        imdbRating?: string;
+        imdbID?: string;
+    }): Record<string, unknown> {
         return {
-            id: crypto.randomUUID(),
-            title: title,
-            ...data
-        } as Movie;
-    }
-
-    private mapOmdbToMovie(omdbData: any): Movie {
-        return {
-            id: crypto.randomUUID(),
-            title: omdbData.Title,
-            poster: omdbData.Poster,
-            plot: omdbData.Plot,
-            runtime: omdbData.Runtime,
-            director: omdbData.Director,
-            year: omdbData.Year,
-            actors: omdbData.Actors,
-            imdbRating: omdbData.imdbRating,
-            imdbId: omdbData.imdbID,
-            error: omdbData.Error,
+            title: omdbData.Title ?? '',
+            poster: omdbData.Poster ?? '',
+            plot: omdbData.Plot ?? '',
+            director: omdbData.Director ?? '',
+            runtime: omdbData.Runtime ?? '',
+            year: omdbData.Year ?? '',
+            actors: omdbData.Actors ?? '',
+            imdbRating: parseFloat(omdbData.imdbRating ?? '0') || 0,
+            imdbId: omdbData.imdbID ?? '',
         };
     }
 
-    private async fetchMovie(title: string): Promise<Movie> {
+    private async fetchOmdbMovie(title: string): Promise<{
+        Title?: string;
+        Poster?: string;
+        Plot?: string;
+        Director?: string;
+        Runtime?: string;
+        Year?: string;
+        Actors?: string;
+        imdbRating?: string;
+        imdbID?: string;
+        Error?: string;
+    }> {
         const urlTitle = encodeURI(title);
-        const response = await fetch(`https://www.omdbapi.com/?apikey=e1e6eb54&t=${urlTitle}`);
-        const omdbData = await response.json();
-        return this.mapOmdbToMovie(omdbData);
+        const response = await (globalThis as unknown as { fetch: (url: string) => Promise<{ json: () => Promise<Record<string, unknown>> }> }).fetch(
+            `https://www.omdbapi.com/?apikey=e1e6eb54&t=${urlTitle}`
+        );
+        return (await response.json()) as Awaited<ReturnType<MoviesService['fetchOmdbMovie']>>;
     }
 }
