@@ -5,12 +5,30 @@ import { readFileSync } from 'fs'
 import { join } from 'path'
 import { resolvers } from './resolvers'
 import { connect } from 'mongoose';
+import { useJWT } from '@graphql-yoga/plugin-jwt';
+import { extractFromCookie } from '@graphql-yoga/plugin-jwt';
+import { JWT_SECRET, JWT_COOKIE_NAME } from './secure';
 
 const typeDefs = readFileSync(join(__dirname, 'schema.graphql'), 'utf-8')
 
 // Create a Yoga instance with a GraphQL schema.
 const schema = createSchema({ typeDefs, resolvers })
-const yoga = createYoga({ schema })
+const yoga = createYoga({ schema,
+  plugins: [
+    useCookies(),
+    useJWT({
+      signingKeyProviders: [
+        () => JWT_SECRET
+      ],
+      tokenLookupLocations: [
+        extractFromCookie({ name: JWT_COOKIE_NAME })
+      ],
+      reject: {
+        missingToken: false,
+        invalidToken: false
+      }
+    })
+] })
 
 // Pass it into a server to hook into request handlers.
 const server = createServer(yoga)
