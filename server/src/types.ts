@@ -11,3 +11,12 @@ export interface Movie {
     imdbId?: string;
     error?: string;
 }
+
+export interface User {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    password?: string;
+    passwordConfirmation?: string;
+}
