@@ -5,6 +5,7 @@ import { readFileSync } from 'fs'
 import { join } from 'path'
 import { resolvers } from './resolvers'
 import { connect } from 'mongoose';
+import { useCookies } from '@whatwg-node/server-plugin-cookies';
 import { useJWT } from '@graphql-yoga/plugin-jwt';
 import { extractFromCookie } from '@graphql-yoga/plugin-jwt';
 import { JWT_SECRET, JWT_COOKIE_NAME } from './secure';
