@@ -1,0 +1,64 @@
+<h2>Registre</h2>
+
+@if (error(); as err) {
+  <p class="error">{{ err }}</p>
+}
+
+<form (submit)="onSubmit($event)">
+  <div class="field">
+    <label for="name">Nom</label>
+    <input id="name" type="text" [formField]="registerForm.name" />
+    @if (registerForm.name().touched() && registerForm.name().invalid()) {
+      <ul class="error-list">
+        @for (err of registerForm.name().errors(); track err) {
+          <li class="error-msg">{{ err.message }}</li>
+        }
+      </ul>
+    }
+  </div>
+  <div class="field">
+    <label for="email">Email</label>
+    <input id="email" type="email" [formField]="registerForm.email" />
+    @if (registerForm.email().touched() && registerForm.email().invalid()) {
+      <ul class="error-list">
+        @for (err of registerForm.email().errors(); track err) {
+          <li class="error-msg">{{ err.message }}</li>
+        }
+      </ul>
+    }
+  </div>
+  <div class="field">
+    <label for="password">Contrasenya</label>
+    <input id="password" type="password" [formField]="registerForm.password" />
+    @if (registerForm.password().touched() && registerForm.password().invalid()) {
+      <ul class="error-list">
+        @for (err of registerForm.password().errors(); track err) {
+          <li class="error-msg">{{ err.message }}</li>
+        }
+      </ul>
+    }
+  </div>
+  <div class="field">
+    <label for="passwordConfirmation">Confirmar contrasenya</label>
+    <input
+      id="passwordConfirmation"
+      type="password"
+      [formField]="registerForm.passwordConfirmation"
+    />
+    @if (registerForm.passwordConfirmation().touched() && registerForm.passwordConfirmation().invalid()) {
+      <ul class="error-list">
+        @for (err of registerForm.passwordConfirmation().errors(); track err) {
+          <li class="error-msg">{{ err.message }}</li>
+        }
+      </ul>
+    }
+  </div>
+  <button type="submit" [disabled]="registerForm().invalid() || isLoading()">
+    {{ isLoading() ? 'Registrant...' : 'Registrar' }}
+  </button>
+</form>
+
+<p>
+  Ja tens compte?
+  <a routerLink="/login">Entra</a>
+</p>

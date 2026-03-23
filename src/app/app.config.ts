@@ -14,7 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),
     provideApollo(() => ({
-      link: inject(HttpLink).create({ uri: '/graphql' }),
+      link: inject(HttpLink).create({ uri: '/graphql', withCredentials: true }),
       cache: new InMemoryCache(),
     })),
     provideClientHydration(withEventReplay()),

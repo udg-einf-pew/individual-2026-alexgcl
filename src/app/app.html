@@ -1,1 +1,15 @@
-<router-outlet />
+<header class="app-header">
+  <nav>
+    <a routerLink="/movies" routerLinkActive="active">Pel·lícules</a>
+    @if (auth.isLoggedIn()) {
+      <span class="user">{{ auth.user()?.name }}</span>
+      <button type="button" (click)="auth.logout()">Logout</button>
+    } @else {
+      <a routerLink="/register" routerLinkActive="active">Registrar-nos</a>
+      <a routerLink="/login" routerLinkActive="active">Login</a>
+    }
+  </nav>
+</header>
+<main>
+  <router-outlet />
+</main>

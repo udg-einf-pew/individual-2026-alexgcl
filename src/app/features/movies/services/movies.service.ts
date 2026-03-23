@@ -35,6 +35,10 @@ export class MoviesService {
     this.loadMovies();
   }
 
+  refetchMovies(): void {
+    this._moviesListWatchQuery.refetch().subscribe();
+  }
+
   private loadMovies(): void {
     console.log('Loading movies...');
     this._isLoading.set(true);

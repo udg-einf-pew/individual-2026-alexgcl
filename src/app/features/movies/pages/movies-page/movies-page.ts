@@ -1,4 +1,4 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MovieForm } from '../../components/movie-form/movie-form';
 import { MovieTrash } from '../../components/movie-trash/movie-trash';
@@ -14,8 +14,12 @@ import { MovieItem } from '../../models/movies.model';
   templateUrl: './movies-page.html',
   styleUrl: './movies-page.scss',
 })
-export class MoviesPage {
+export class MoviesPage implements OnInit {
   private moviesService = inject(MoviesService);
+
+  ngOnInit(): void {
+    this.moviesService.refetchMovies();
+  }
 
   get movies() {
     return this.moviesService.movies;

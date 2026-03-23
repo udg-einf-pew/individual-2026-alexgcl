@@ -1,0 +1,38 @@
+<h2>Login</h2>
+
+@if (error(); as err) {
+  <p class="error">{{ err }}</p>
+}
+
+<form (submit)="onSubmit($event)">
+  <div class="field">
+    <label for="email">Email</label>
+    <input id="email" type="email" [formField]="loginForm.email" />
+    @if (loginForm.email().touched() && loginForm.email().invalid()) {
+      <ul class="error-list">
+        @for (err of loginForm.email().errors(); track err) {
+          <li class="error-msg">{{ err.message }}</li>
+        }
+      </ul>
+    }
+  </div>
+  <div class="field">
+    <label for="password">Contrasenya</label>
+    <input id="password" type="password" [formField]="loginForm.password" />
+    @if (loginForm.password().touched() && loginForm.password().invalid()) {
+      <ul class="error-list">
+        @for (err of loginForm.password().errors(); track err) {
+          <li class="error-msg">{{ err.message }}</li>
+        }
+      </ul>
+    }
+  </div>
+  <button type="submit" [disabled]="loginForm().invalid() || isLoading()">
+    {{ isLoading() ? 'Entrant...' : 'Entrar' }}
+  </button>
+</form>
+
+<p>
+  No tens compte?
+  <a routerLink="/register">Registra't</a>
+</p>
