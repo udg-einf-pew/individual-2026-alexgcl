@@ -11,12 +11,34 @@ type Movie {
     imdbId: String
     error: String
 }
+
 type Query {
     test: String
     movies: [Movie!]!
+    # User
+    profile: User!
 }
+
 type Mutation {
     addMovie(title: String!): Movie!
     deleteMovie(id: String!): Boolean!
     deleteAllMovies: Boolean!
+    # Auth
+    register(user: Register!): Boolean!
+    login(email: String!, password: String!): Boolean!
+    logout: Boolean!
+}
+
+input Register {
+    name: String!
+    email: String!
+    password: String!
+    passwordConfirmation: String!
+}
+
+type User {
+    id: String!
+    name: String
+    email: String
+    role: String
 }

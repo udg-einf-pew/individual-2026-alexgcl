@@ -2,6 +2,7 @@ import { Schema, model } from 'mongoose';
 import { Movie } from '../types';
 
 const movieSchema = new Schema<Movie>({
+  userId: { type: Schema.Types.ObjectId, ref: 'User' },
   title: { type: String, required: true },
   poster: { type: String, required: true },
   plot: { type: String, required: true },

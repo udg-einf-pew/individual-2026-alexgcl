@@ -1,5 +1,8 @@
+import { Types } from 'mongoose';
+
 export interface Movie {
     id: string;
+    userId?: Types.ObjectId;
     title?: string;
     poster?: string;
     plot?: string;

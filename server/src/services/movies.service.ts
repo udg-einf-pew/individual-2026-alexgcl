@@ -1,5 +1,6 @@
 import { Movie } from '../types';
 import MovieModel from '../models/movie';
+import { Types, HydratedDocument } from 'mongoose';
 
 export class MoviesService {
     constructor() {
@@ -20,34 +21,49 @@ export class MoviesService {
         } as Movie;
     }
 
-    async getMovies(): Promise<Movie[]> {
-        const docs = await MovieModel.find().exec();
+    async getMovies(userId: string): Promise<Movie[]> {
+        const docs = await MovieModel.find({ userId: new Types.ObjectId(userId) }).exec();
         return docs.map((doc: unknown) => this.mapDocToMovie(doc));
     }
 
-    async addMovie(title: string): Promise<Movie> {
+    async addMovie(userId: string, title: string): Promise<Movie> {
         if (title.trim() === '') {
             throw new Error('Title cannot be empty');
         }
-
-        const omdbData = await this.fetchOmdbMovie(title);
-        if (omdbData.Error) {
-            throw new Error(omdbData.Error || 'Failed to fetch movie data');
+        try {
+            const omdbData = await this.fetchOmdbMovie(title);
+            if (omdbData.Error) {
+                throw new Error(omdbData.Error || 'Failed to fetch movie data');
+            }
+            const newMovie = this.mapOmdbToMovieData(omdbData) as Record<string, unknown>;
+            newMovie.userId = new Types.ObjectId(userId);
+            const docMovie: HydratedDocument<Movie> = await MovieModel.create(newMovie);
+            await docMovie.save();
+            return this.mapDocToMovie(docMovie);
+        } catch (error) {
+            const errorMovie = this.errorMovie(title, { error: 'Failed to fetch movie data' });
+            return errorMovie;
         }
-
-        const movieData = this.mapOmdbToMovieData(omdbData);
-        const newMovie = new MovieModel(movieData);
-        const saved = await newMovie.save();
-        return this.mapDocToMovie(saved);
     }
 
-    async deleteMovie(movieId: string): Promise<boolean> {
-        const result = await MovieModel.findByIdAndDelete(movieId).exec();
+    private errorMovie(title: string, opts: { error?: string }): Movie {
+        return {
+            id: '',
+            title,
+            error: opts.error ?? 'Failed to fetch movie data'
+        };
+    }
+
+    async deleteMovie(userId: string, movieId: string): Promise<boolean> {
+        const result = await MovieModel.findOneAndDelete({
+            _id: movieId,
+            userId: new Types.ObjectId(userId)
+        }).exec();
         return result != null;
     }
 
-    async deleteAllMovies(): Promise<boolean> {
-        const result = await MovieModel.deleteMany({}).exec();
+    async deleteAllMovies(userId: string): Promise<boolean> {
+        const result = await MovieModel.deleteMany({ userId: new Types.ObjectId(userId) }).exec();
         return (result?.deletedCount ?? 0) > 0;
     }
 
