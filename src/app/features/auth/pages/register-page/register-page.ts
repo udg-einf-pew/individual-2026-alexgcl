@@ -68,12 +68,10 @@ export class RegisterPage {
 
   protected onSubmit(event: Event): void {
     event.preventDefault();
-    submit(this.registerForm, {
-      action: () => {
-        this.auth.clearError();
-        const input = this.registerModel();
-        this.auth.register(input);
-      },
+    submit(this.registerForm, async () => {
+      this.auth.clearError();
+      const input = this.registerModel();
+      this.auth.register(input);
     });
   }
 }

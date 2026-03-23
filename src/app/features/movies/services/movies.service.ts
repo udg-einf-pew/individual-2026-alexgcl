@@ -36,7 +36,7 @@ export class MoviesService {
   }
 
   refetchMovies(): void {
-    this._moviesListWatchQuery.refetch().subscribe();
+    this._moviesListWatchQuery.refetch().then(() => {}).catch(() => {});
   }
 
   private loadMovies(): void {

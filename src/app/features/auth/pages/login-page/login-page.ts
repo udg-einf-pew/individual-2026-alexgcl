@@ -41,12 +41,10 @@ export class LoginPage {
 
   protected onSubmit(event: Event): void {
     event.preventDefault();
-    submit(this.loginForm, {
-      action: () => {
-        this.auth.clearError();
-        const { email, password } = this.loginModel();
-        this.auth.login(email, password);
-      },
+    submit(this.loginForm, async () => {
+      this.auth.clearError();
+      const { email, password } = this.loginModel();
+      this.auth.login(email, password);
     });
   }
 }
